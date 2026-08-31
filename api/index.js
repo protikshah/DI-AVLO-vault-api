@@ -2,13 +2,7 @@ const express = require("express");
 const axios = require("axios");
 const app = express();
 
-// 🔒 1. PERMISSION & KILL SWITCH LIST
-const ALLOWED_KEYS = [
-    "DI-ABLO-PROTIK-OWNER", // তোর সিক্রেট চাবি
-    "KEY-USER-RAHIM"        // ফ্রেন্ড বা ইউজারের চাবি
-];
-
-// 📁 2. MEDIA VAULT CATEGORIES
+// 📁 MEDIA VAULT CATEGORIES (তোর দেওয়া একদম সঠিক হিসাব)
 const mediaVault = {
     redgirl: [
       "https://files.catbox.moe/8mm6kh.mp4", "https://files.catbox.moe/ssikpx.mp4", "https://files.catbox.moe/joz0lj.mp4",
@@ -27,7 +21,7 @@ const mediaVault = {
       "https://files.catbox.moe/1al5i0.mp4", "https://files.catbox.moe/2bxzx0.mp4", "https://files.catbox.moe/nw5k61.mp4",
       "https://files.catbox.moe/f3pogm.mp4", "https://files.catbox.moe/o5234v.mp4", "https://files.catbox.moe/bex9ml.mp4",
       "https://files.catbox.moe/crt7ai.mp4", "https://files.catbox.moe/oymzv7.mp4"
-    ],
+    ], // 47 videos
     romantic: [
       "https://files.catbox.moe/nbzg9q.mp4", "https://files.catbox.moe/f5b77c.mp4", "https://files.catbox.moe/x5efgi.mp4",
       "https://files.catbox.moe/c207ri.mp4", "https://files.catbox.moe/sdh5lz.mp4", "https://files.catbox.moe/hd6rqw.mp4",
@@ -44,7 +38,7 @@ const mediaVault = {
       "https://files.catbox.moe/xhkpyn.mp4", "https://files.catbox.moe/5887oq.mp4", "https://files.catbox.moe/k1azqr.mp4",
       "https://files.catbox.moe/lp627q.mp4", "https://files.catbox.moe/d4h6jp.mp4", "https://files.catbox.moe/n9ta4p.mp4",
       "https://files.catbox.moe/9dgdc8.mp4"
-    ],
+    ], // 43 videos
     singgirl: [
       "https://files.catbox.moe/64j2e9.mp4", "https://files.catbox.moe/rmmylk.mp4", "https://files.catbox.moe/hzjhf3.mp4",
       "https://files.catbox.moe/940m54.mp4", "https://files.catbox.moe/vqwv4v.mp4", "https://files.catbox.moe/ar4jwu.mp4",
@@ -53,7 +47,7 @@ const mediaVault = {
       "https://files.catbox.moe/zvc83c.mp4", "https://files.catbox.moe/8m3s8o.mp4", "https://files.catbox.moe/t3kqch.mp4",
       "https://files.catbox.moe/0181ap.mp4", "https://files.catbox.moe/08h7s2.mp4", "https://files.catbox.moe/44wboe.mp4",
       "https://files.catbox.moe/48uaca.mp4"
-    ],
+    ], // 19 videos
     girl99: [
       "https://files.catbox.moe/xktox6.mp4", "https://files.catbox.moe/rw1vxd.mp4", "https://files.catbox.moe/8r5z4r.mp4",
       "https://files.catbox.moe/2otopk.mp4", "https://files.catbox.moe/sg6ag6.mp4", "https://files.catbox.moe/2n69yc.mp4",
@@ -68,7 +62,7 @@ const mediaVault = {
       "https://files.catbox.moe/r1f7r2.mp4", "https://files.catbox.moe/vbkw1k.mp4", "https://files.catbox.moe/tc0jzj.mp4",
       "https://files.catbox.moe/yajxkr.mp4", "https://files.catbox.moe/856809.mp4", "https://files.catbox.moe/biihbv.mp4",
       "https://files.catbox.moe/qv4pal.mp4"
-    ],
+    ], // 37 videos
     anygirl: [
       "https://files.catbox.moe/xktox6.mp4", "https://files.catbox.moe/rw1vxd.mp4", "https://files.catbox.moe/8r5z4r.mp4",
       "https://files.catbox.moe/2otopk.mp4", "https://files.catbox.moe/sg6ag6.mp4", "https://files.catbox.moe/2n69yc.mp4",
@@ -83,7 +77,7 @@ const mediaVault = {
       "https://files.catbox.moe/r1f7r2.mp4", "https://files.catbox.moe/vbkw1k.mp4", "https://files.catbox.moe/tc0jzj.mp4",
       "https://files.catbox.moe/yajxkr.mp4", "https://files.catbox.moe/856809.mp4", "https://files.catbox.moe/biihbv.mp4",
       "https://files.catbox.moe/qv4pal.mp4"
-    ],
+    ], // 37 videos
     girl2: [
       "https://files.catbox.moe/9589t8.mp4", "https://files.catbox.moe/752ct1.mp4", "https://files.catbox.moe/bc7vym.mp4",
       "https://files.catbox.moe/km7xr6.mp4", "https://files.catbox.moe/gvvbp8.mp4", "https://files.catbox.moe/r4kbtr.mp4",
@@ -99,35 +93,28 @@ const mediaVault = {
       "https://files.catbox.moe/0vl31x.mp4", "https://files.catbox.moe/8e8u5x.mp4", "https://files.catbox.moe/ci6ucl.mp4",
       "https://files.catbox.moe/r6y42w.mp4", "https://files.catbox.moe/mchey6.mp4", "https://files.catbox.moe/q16v0h.mp4",
       "https://files.catbox.moe/ulz01p.mp4"
-    ]
+    ] // 40 videos
 };
 
-// 🛡️ API ENGINE
+// 🛡️ API ENGINE (Open for everyone)
 app.get("/api/media", async (req, res) => {
-    const clientKey = req.headers["x-api-key"];
-    const authorHeader = req.headers["x-author-name"];
     const category = req.query.category;
 
-    const isValidAuthor = authorHeader && (authorHeader.includes("Pratik Shah") || authorHeader.includes("DI-ABLO JI-SOO"));
-
-    if (!clientKey || !ALLOWED_KEYS.includes(clientKey) || !isValidAuthor) {
-        return res.status(403).json({
-            status: "blocked",
-            message: "⛔ ACCESS DENIED! License invalid or Author modified."
-        });
-    }
-
+    // ক্যাটাগরি না দিলে বা ভুল দিলে মেসেজ দেখাবে
     if (!category || !mediaVault[category]) {
         return res.status(400).json({
             status: "error",
-            message: `❌ Invalid category! Available: ${Object.keys(mediaVault).join(", ")}`
+            message: `❌ Invalid or missing category! Please use one of the following: ${Object.keys(mediaVault).join(", ")}`,
+            example: "https://your-domain.vercel.app/api/media?category=romantic"
         });
     }
 
     try {
         const categoryList = mediaVault[category];
+        // র্যান্ডম ভিডিও সিলেক্ট করা
         const randomMediaUrl = categoryList[Math.floor(Math.random() * categoryList.length)];
 
+        // ভিডিও স্ট্রিম করা
         const stream = await axios({ method: "GET", url: randomMediaUrl, responseType: "stream" });
         
         if (randomMediaUrl.endsWith(".mp4")) {
@@ -140,6 +127,15 @@ app.get("/api/media", async (req, res) => {
     } catch (err) {
         res.status(500).json({ status: "error", message: "Failed to stream media asset." });
     }
+});
+
+// মূল লিংকে (Root) গেলে স্বাগতম মেসেজ দেখাবে (Cannot GET / সমস্যা সমাধানের জন্য)
+app.get("/", (req, res) => {
+    res.json({
+        message: "Welcome to Diablo Media API! 🔥",
+        usage: "Add '/api/media?category=CATEGORY_NAME' to get a random video.",
+        categories: Object.keys(mediaVault)
+    });
 });
 
 module.exports = app;
